@@ -43,4 +43,42 @@
 
       一页大小默认16kb，InnoDB对行记录有硬性定义，一页最多存储16kb / 2 - 200 = 7992行记录。  
 
-2. 
+2. InnoDB行记录格式
+
+   1. <u>Compact</u>和<u>Redundant</u>行记录格式
+
+      * Compact
+
+        RowId（如果该表没有主键） |事务Id列 | 回滚指针列 | 变长字段长度列表 | NULL标志位 | 记录头信息 | 列1数据 | 列2数据 | ....... 
+
+        ps：变长字段长度列表按照列的顺序逆序放置    03 02 01 分别代表长度为3、2、1                                                
+
+        ![avatar](E:\技术笔记\MySQL_Learn_Note\MySQL技术内幕\pic\Compact记录头信息.png)
+
+        NULL标志位记录为空的列，行记录不存储为NULL的列
+
+      * Redundant
+
+        RowId（如果该表没有主键） |事务Id列 | 回滚指针列 | 字段长度偏移列表 | 列表头信息 | 列1数据 | 列2数据 | ......
+
+        ps：字段长度偏移列表逆序存储 
+
+        ![avatar](E:\技术笔记\MySQL_Learn_Note\MySQL技术内幕\pic\Redundant记录头信息.png)
+
+        由于没有NULL标志位，因此对部分类型的列会实际存储为NULL值，如char定长字段，varchar不存储
+
+   2. Compressed和Dynamic行记录格式
+
+      在Compressed格式里，对于BLOB等数据采取完全行溢出存储，数据页只会存储一个20字节的指针指向Off Page，并且在外部页使用压缩算法大长度类型数据。
+
+3. InnoDB数据页结构
+
+   ![avatar](E:\技术笔记\MySQL_Learn_Note\MySQL技术内幕\pic\InnoDB数据页结构.png)
+
+   1. File Header
+
+      ![avatar](E:\技术笔记\MySQL_Learn_Note\MySQL技术内幕\pic\FileHeader 组成部分.png)
+
+   2. Page Header
+
+      
