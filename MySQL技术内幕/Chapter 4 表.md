@@ -6,7 +6,7 @@
 
    分别是段、区、页（存放数据行）。
 
-   ![avatar](\pic\InnoDB逻辑存储结构.png)
+   ![avatar](.\pic\InnoDB逻辑存储结构.png)
 
    1. 表空间
 
@@ -53,17 +53,17 @@
 
         ps：变长字段长度列表按照列的顺序逆序放置    03 02 01 分别代表长度为3、2、1                                                
 
-        ![avatar](\pic\Compact记录头信息.png)
+        ![avatar](.\pic\Compact记录头信息.png)
 
         NULL标志位记录为空的列，行记录不存储为NULL的列
 
       * Redundant
 
-        RowId（如果该表没有主键） |事务Id列 | 回滚指针列 | 字段长度偏移列表 | 列表头信息 | 列1数据 | 列2数据 | ......
+        RowId（如果该表没有主键） |事务Id列 | 回滚指针列 | 字段长度偏移列表 | 记录头信息 | 列1数据 | 列2数据 | ......
 
         ps：字段长度偏移列表逆序存储 
 
-        ![avatar](\pic\Redundant记录头信息.png)
+        ![avatar](.\pic\Redundant记录头信息.png)
 
         由于没有NULL标志位，因此对部分类型的列会实际存储为NULL值，如char定长字段，varchar不存储
 
@@ -73,17 +73,19 @@
 
 3. InnoDB数据页结构
 
-   ![avatar](\pic\InnoDB数据页结构.png)
+   ![avatar](.\pic\InnoDB数据页结构.png)
 
    1. File Header
 
-      ![avatar](\pic\FileHeader 组成部分.png)
+      ![avatar](.\pic\FileHeader 组成部分.png)
 
    2. Page Header
 
+      ![avatar](./pic/Page Header组成部分.png)
+   
    3. Infimun和Supermum Records
    
-      是两个特殊的行记录，用来限定记录的边界，Infimun是比该页任何主键值都要小的值，Supermun则是都要大的值。在页内他们就是两个字符串代表两个特殊的行。在页数据堆里是最顶上的两个记录。
+      是两个特殊的行记录，用来限定记录的边界，Infimun是比该页任何主键值都要小的值，Supermun则是都要大的值。在页内他们就是只有一列的两个特殊的行。在页数据堆里是最顶上的两个记录。
    
    4. User Records和Free Space  
    
@@ -94,3 +96,7 @@
    5. Page Directory  
    
       将页内的数据划分成多个槽，使用槽进行二分查找可以快速定位行记录所在的槽，然后再顺序遍历找到对应的记录。存储这些槽的地方就是Page Directory。形象点就是一把100cm的尺子，按规则划分为5段，分别为0-20，21-40，41-60，61-80，81-100，那么这些槽（slot）就是0,21,41这种标志性的边界，对这些边界进行二分查找可以快速定位，缩小查找范围。在Page Directory里这些slot就是这些槽的边界行的相对地址。
+   
+   6. File Trailer
+   
+      检测页的完整性。  
