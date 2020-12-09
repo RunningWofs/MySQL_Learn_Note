@@ -42,8 +42,20 @@
    1. 行锁的三种算法  
 
       + Record Lock：单个行记录上的锁
+
+        总是锁住索引记录，如果没有索引（显式主键也没定义），那就按照隐式主键进行锁定；
+
       + Gap Lock：间隙锁，锁定一个范围，不包含记录本身
+
       + Next-Key Lock：Record Lock+Gap Lock，锁范围加本身  
 
-      
+        对于非唯一索引，锁住第一个小于该索引到第一个大于该索引的所对应的行记录
+
+   2. phantom problem（幻象问题）
+      Phantom Problem指同一事务下，连续执行两次同样的SQL语句可能导致不同的结果，第二次的SQL语句可能会返回之前不存在的行。
+      InnoDB采用Next-Key Locking算法避免幻象问题，在RR级别下可以解决。
+
+   
+
+   
 
