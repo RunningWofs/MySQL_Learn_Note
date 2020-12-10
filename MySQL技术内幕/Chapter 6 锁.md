@@ -55,7 +55,3 @@
       Phantom Problem指同一事务下，连续执行两次同样的SQL语句可能导致不同的结果，第二次的SQL语句可能会返回之前不存在的行。
       InnoDB采用Next-Key Locking算法避免幻象问题，在RR级别下可以解决。
 
-   
-
-   
-
